@@ -1,0 +1,845 @@
+1
+00:00:09,870 --> 00:00:10,880
+Hi all. Welcome to
+
+
+2
+00:00:10,880 --> 00:00:14,430
+another episode of Saturday architecture.
+
+
+3
+00:00:14,430 --> 00:00:18,020
+One of the things that popped up this week is the prime
+
+
+4
+00:00:18,020 --> 00:00:21,360
+video releasing a video on how they move from micro
+
+
+5
+00:00:21,360 --> 00:00:25,530
+services to monoliths and the internet has been a bust
+
+
+6
+00:00:25,530 --> 00:00:28,210
+with this microservices a bad idea.
+
+
+7
+00:00:28,210 --> 00:00:31,840
+So in this case, it's definitely it saved them 90% cost.
+
+
+8
+00:00:31,840 --> 00:00:37,160
+And the short understanding which I have is that they
+
+
+9
+00:00:37,160 --> 00:00:40,550
+have three modules, one to acquire data, one to detect
+
+
+10
+00:00:40,550 --> 00:00:43,520
+defect and another block to fix it.
+
+
+11
+00:00:43,520 --> 00:00:50,360
+All the three were in three different micro services and
+
+
+12
+00:00:50,360 --> 00:00:55,620
+there was a cost associated with the capture, storing it
+
+
+13
+00:00:55,620 --> 00:01:00,500
+on external storage cost of acquiring the data cost of
+
+
+14
+00:01:00,500 --> 00:01:04,640
+using it and they hit account limits when they try to
+
+
+15
+00:01:04,640 --> 00:01:08,590
+capture individual frames and storage somewhere and
+
+
+16
+00:01:08,590 --> 00:01:12,570
+the detector module will take it from that storage, find out
+
+
+17
+00:01:12,570 --> 00:01:15,170
+if there is a defect and let
+
+
+18
+00:01:15,170 --> 00:01:17,370
+the healer or the fixer module fix it.
+
+
+19
+00:01:17,370 --> 00:01:20,350
+So they were there has to be handoff between process
+
+
+20
+00:01:20,350 --> 00:01:23,960
+and data and there's a workflow involved in doing all this
+
+
+21
+00:01:23,960 --> 00:01:26,330
+and this period very costly to them.
+
+
+22
+00:01:26,330 --> 00:01:29,670
+And they moved to a monolith where all the three were
+
+
+23
+00:01:29,670 --> 00:01:34,030
+done by one single instance where they could eliminate
+
+
+24
+00:01:34,030 --> 00:01:35,770
+multiple cost issues.
+
+
+25
+00:01:35,770 --> 00:01:40,470
+Now, when I take a step back and look at it, I don't think
+
+
+26
+00:01:40,470 --> 00:01:43,740
+there was anything wrong in the way they approached it
+
+
+27
+00:01:43,740 --> 00:01:48,810
+because it has been age old wisdom in real time data
+
+
+28
+00:01:48,810 --> 00:01:52,910
+acquisition and processing industry that you separate out
+
+
+29
+00:01:52,910 --> 00:01:55,670
+the data acquirer from the data processor.
+
+
+30
+00:01:55,670 --> 00:01:58,180
+I think that is a well established pattern.
+
+
+31
+00:01:58,180 --> 00:02:06,110
+In this case, it didn't work so deepa what do you think
+
+
+32
+00:02:06,110 --> 00:02:11,970
+can be done to so using a design pattern or a standard
+
+
+33
+00:02:11,970 --> 00:02:13,080
+thing is a way of
+
+
+34
+00:02:13,080 --> 00:02:15,400
+being efficient and doing good architecture.
+
+
+35
+00:02:15,400 --> 00:02:18,230
+You don't keep reinventing the wheel again and again,
+
+
+36
+00:02:18,230 --> 00:02:21,120
+even with the standard thing of telling, hey, it's a real
+
+
+37
+00:02:21,120 --> 00:02:23,940
+time streaming data acquirer is gonna be separate,
+
+
+38
+00:02:23,940 --> 00:02:25,110
+process is gonna be separate.
+
+
+39
+00:02:25,110 --> 00:02:28,450
+I think it's a very fair architecture decision which turned
+
+
+40
+00:02:28,450 --> 00:02:30,760
+out to be wrong in hindsight.
+
+
+41
+00:02:30,760 --> 00:02:35,090
+But how do we not fall into this process? Do you have
+
+
+42
+00:02:35,090 --> 00:02:35,940
+any thoughts on that?
+
+
+43
+00:02:35,940 --> 00:02:39,840
+So first of all, it's a good thing, they fixed it and they
+
+
+44
+00:02:39,840 --> 00:02:41,870
+published about it and we are discussing it.
+
+
+45
+00:02:41,870 --> 00:02:44,090
+So it's good because some things
+
+
+46
+00:02:44,090 --> 00:02:45,570
+you will learn only in production,
+
+
+47
+00:02:45,570 --> 00:02:50,060
+So there's no way you can test out every possible angle
+
+
+48
+00:02:50,060 --> 00:02:53,300
+of the result of an architecture now how they could have
+
+
+49
+00:02:53,300 --> 00:02:55,280
+fixed it at the beginning,
+
+
+50
+00:02:55,280 --> 00:03:00,970
+This is my opinion obviously that why the sometimes the
+
+
+51
+00:03:00,970 --> 00:03:04,650
+methodology perceives the problem solving so that
+
+
+52
+00:03:04,650 --> 00:03:09,170
+should, that is a pitfall which should be kept in, in view.
+
+
+53
+00:03:09,170 --> 00:03:13,010
+It's, it's not that you can always avoid it. But
+
+
+54
+00:03:13,010 --> 00:03:15,660
+methodologies are again for efficiency, like you said,
+
+
+55
+00:03:15,660 --> 00:03:17,950
+So design patterns are for efficiency.
+
+
+56
+00:03:17,950 --> 00:03:22,340
+But at some point, problem solving has to override all the
+
+
+57
+00:03:22,340 --> 00:03:24,910
+methodology and say is this the way to solve the
+
+
+58
+00:03:24,910 --> 00:03:26,270
+problem which I'm having?
+
+
+59
+00:03:26,270 --> 00:03:29,230
+That's that is the, that is the place where you question
+
+
+60
+00:03:29,230 --> 00:03:33,620
+the assumption of whether this architecture is doing what
+
+
+61
+00:03:33,620 --> 00:03:35,360
+it is really expected to do.
+
+
+62
+00:03:35,360 --> 00:03:40,550
+Second part of indications of of looking at some of these
+
+
+63
+00:03:40,550 --> 00:03:44,790
+things is how micro services are actually executed in, in
+
+
+64
+00:03:44,790 --> 00:03:47,460
+practice, who is making these micro services?
+
+
+65
+00:03:47,460 --> 00:03:49,900
+How many teams are making these micro services? Are
+
+
+66
+00:03:49,900 --> 00:03:51,140
+they separate teams?
+
+
+67
+00:03:51,140 --> 00:03:54,440
+The separation of teams will obviously move them into
+
+
+68
+00:03:54,440 --> 00:03:57,900
+their own architecture niches and they will keep on
+
+
+69
+00:03:57,900 --> 00:04:00,620
+progressing in that and sort of be blindsided by the
+
+
+70
+00:04:00,620 --> 00:04:02,810
+collaboration piece which needs to happen.
+
+
+71
+00:04:02,810 --> 00:04:07,380
+Now, it is possible, I do not know how the Amazon teams
+
+
+72
+00:04:07,380 --> 00:04:08,650
+were structured or whether they
+
+
+73
+00:04:08,650 --> 00:04:10,060
+were the same team or not.
+
+
+74
+00:04:10,060 --> 00:04:12,790
+Now that that could be one indication if one team is
+
+
+75
+00:04:12,790 --> 00:04:17,310
+doing three micro services, it should be looked at, should
+
+
+76
+00:04:17,310 --> 00:04:18,580
+they be really three micro services?
+
+
+77
+00:04:18,580 --> 00:04:20,940
+Maybe all three should be one, Because it's the same
+
+
+78
+00:04:20,940 --> 00:04:23,110
+team which is doing it. That is an indication.
+
+
+79
+00:04:23,110 --> 00:04:27,060
+I'm not saying that is always true because for
+
+
+80
+00:04:27,060 --> 00:04:30,220
+methodology reasons and bureaucratic reasons, you
+
+
+81
+00:04:30,220 --> 00:04:32,080
+might have the same team doing it because there are
+
+
+82
+00:04:32,080 --> 00:04:34,380
+not enough resources available in other things.
+
+
+83
+00:04:34,380 --> 00:04:37,740
+But if somebody has thought about that, this is the same
+
+
+84
+00:04:37,740 --> 00:04:39,420
+team, we should be developing it.
+
+
+85
+00:04:39,420 --> 00:04:42,360
+It should be considered whether there should be actually
+
+
+86
+00:04:42,360 --> 00:04:44,710
+one service rather than three micro service. When
+
+
+87
+00:04:44,710 --> 00:04:47,920
+we say team, it also alludes to the fact that what is the
+
+
+88
+00:04:47,920 --> 00:04:49,490
+business capability that they
+
+
+89
+00:04:49,490 --> 00:04:51,230
+are exhibiting to the customer.
+
+
+90
+00:04:51,230 --> 00:04:54,670
+So the services again is looked at from a capability
+
+
+91
+00:04:54,670 --> 00:04:57,970
+perspective should be an indicator when you do things
+
+
+92
+00:04:57,970 --> 00:04:59,360
+across micro services,
+
+
+93
+00:04:59,360 --> 00:05:03,130
+There is a overhead involved here, the overhead of
+
+
+94
+00:05:03,130 --> 00:05:07,750
+transferring the data frames and getting it back.
+
+
+95
+00:05:07,750 --> 00:05:09,900
+It has both a technical cost
+
+
+96
+00:05:09,900 --> 00:05:11,900
+and a monetary cost with that.
+
+
+97
+00:05:11,900 --> 00:05:16,720
+Is there some way in which we could detect this when
+
+
+98
+00:05:16,720 --> 00:05:18,250
+you talk about micro services?
+
+
+99
+00:05:18,250 --> 00:05:21,070
+Is there a formal approach we can do? Yeah,
+
+
+100
+00:05:21,070 --> 00:05:25,650
+actually there's a formal study of of this kind of behavior
+
+
+101
+00:05:25,650 --> 00:05:29,150
+which is which has existed for at least 100 plus years,
+
+
+102
+00:05:29,150 --> 00:05:30,950
+which is the concept of work study.
+
+
+103
+00:05:30,950 --> 00:05:34,060
+Now this is comes from production engineering,
+
+
+104
+00:05:34,060 --> 00:05:36,140
+industrial engineering, mechanical engineering
+
+
+105
+00:05:36,140 --> 00:05:39,790
+perspective, which studies actually how human beings
+
+
+106
+00:05:39,790 --> 00:05:42,730
+work and they break down the tasks into smaller parts
+
+
+107
+00:05:42,730 --> 00:05:46,970
+and see how physically the motion happens.
+
+
+108
+00:05:46,970 --> 00:05:49,830
+So there is there's a motion study, there is a breakdown
+
+
+109
+00:05:49,830 --> 00:05:54,510
+of how effective the motion can be the economy of
+
+
+110
+00:05:54,510 --> 00:05:58,490
+motion of accessing things of how the tools are available
+
+
+111
+00:05:58,490 --> 00:06:01,460
+to the workmen at what location, they should be kept
+
+
+112
+00:06:01,460 --> 00:06:05,380
+who should be doing what that kind of study will actually
+
+
+113
+00:06:05,380 --> 00:06:10,120
+can help in in this whole going back and forth, this
+
+
+114
+00:06:10,120 --> 00:06:14,510
+economy of motion, how minimum I have to move myself
+
+
+115
+00:06:14,510 --> 00:06:16,490
+to get the tools I need to do the job,
+
+
+116
+00:06:16,490 --> 00:06:20,810
+So in this case, this is the analogy exists within the
+
+
+117
+00:06:20,810 --> 00:06:23,390
+science of work study I would say interesting.
+
+
+118
+00:06:23,390 --> 00:06:27,230
+So basically, I think in short, a software architect or
+
+
+119
+00:06:27,230 --> 00:06:31,430
+somebody in technology should actually sit with probably
+
+
+120
+00:06:31,430 --> 00:06:36,120
+yes experienced expert in production and engineering or
+
+
+121
+00:06:36,120 --> 00:06:39,820
+in manufacturing and kind of learn from them on how
+
+
+122
+00:06:39,820 --> 00:06:42,280
+they decided to bring things
+
+
+123
+00:06:42,280 --> 00:06:44,600
+together or break them apart.
+
+
+124
+00:06:44,600 --> 00:06:47,830
+I think we can learn a lot from the mechanical and a
+
+
+125
+00:06:47,830 --> 00:06:52,320
+manufacturing industry before deciding what to break
+
+
+126
+00:06:52,320 --> 00:06:55,300
+and what to keep it together.
+
+
+127
+00:06:55,300 --> 00:06:57,630
+That's a very interesting perspective. The manufacturing
+
+
+128
+00:06:57,630 --> 00:06:58,610
+industry is a lot more
+
+
+129
+00:06:58,610 --> 00:07:00,870
+mature. Industrial revolution is much, much older than
+
+
+130
+00:07:00,870 --> 00:07:03,400
+the information technology revolution. I
+
+
+131
+00:07:03,400 --> 00:07:08,390
+think we can probably correlate micro services to
+
+
+132
+00:07:08,390 --> 00:07:11,550
+individual machines, each person doing the job and
+
+
+133
+00:07:11,550 --> 00:07:15,430
+probably learn from there and kind of help us design
+
+
+134
+00:07:15,430 --> 00:07:17,710
+better micro services if we get
+
+
+135
+00:07:17,710 --> 00:07:20,320
+some learnings from the manufacturing industry,
+
+
+136
+00:07:20,320 --> 00:07:23,410
+I mean a lot of examples of the machines, especially the
+
+
+137
+00:07:23,410 --> 00:07:26,630
+automated machines which are building like packaging
+
+
+138
+00:07:26,630 --> 00:07:28,530
+machines and see how many operations are done
+
+
+139
+00:07:28,530 --> 00:07:33,050
+together in one machine which could be broken apart
+
+
+140
+00:07:33,050 --> 00:07:35,470
+and done in serial order in an assembly line.
+
+
+141
+00:07:35,470 --> 00:07:38,950
+But they try to optimize it try to do it together.
+
+
+142
+00:07:38,950 --> 00:07:42,460
+It is how can I minimize the amount of motion I need to
+
+
+143
+00:07:42,460 --> 00:07:44,000
+have even within robots, not
+
+
+144
+00:07:44,000 --> 00:07:45,930
+just not just the human beings,
+
+
+145
+00:07:45,930 --> 00:07:48,720
+How do you bring that up? There's lots and lots of
+
+
+146
+00:07:48,720 --> 00:07:50,480
+analogies available there of how do
+
+
+147
+00:07:50,480 --> 00:07:53,510
+you, that's a very good idea example of one machine
+
+
+148
+00:07:53,510 --> 00:07:55,790
+doing a lot of things and getting it out.
+
+
+149
+00:07:55,790 --> 00:07:56,230
+But that's
+
+
+150
+00:07:56,230 --> 00:07:58,350
+the concept of monolithic in that sense.
+
+
+151
+00:07:58,350 --> 00:08:01,370
+So there's another concept, this just reminds me that the
+
+
+152
+00:08:01,370 --> 00:08:03,540
+within there also comes from manufacturing, which is
+
+
+153
+00:08:03,540 --> 00:08:05,110
+called the value stream mapping.
+
+
+154
+00:08:05,110 --> 00:08:07,710
+The whole concept of value stream mapping, which
+
+
+155
+00:08:07,710 --> 00:08:11,010
+looks at the process from end to end perspective and
+
+
+156
+00:08:11,010 --> 00:08:12,670
+where you can find these inefficiencies.
+
+
+157
+00:08:12,670 --> 00:08:16,160
+So even if you have to do it retrospectively, you can do a
+
+
+158
+00:08:16,160 --> 00:08:17,940
+do, you can do a time and
+
+
+159
+00:08:17,940 --> 00:08:20,030
+motion study using that work study principle.
+
+
+160
+00:08:20,030 --> 00:08:23,510
+And or you can also do a larger study of whether this
+
+
+161
+00:08:23,510 --> 00:08:25,520
+whole system is being efficient or not.
+
+
+162
+00:08:25,520 --> 00:08:26,290
+You do value stream
+
+
+163
+00:08:26,290 --> 00:08:29,510
+that mentally. We just have to connect different machines
+
+
+164
+00:08:29,510 --> 00:08:33,030
+and different people and doing different processes to
+
+
+165
+00:08:33,030 --> 00:08:36,210
+different software components and different tasks.
+
+
+166
+00:08:36,210 --> 00:08:38,490
+And I think then we would be able to connect and get
+
+
+167
+00:08:38,490 --> 00:08:40,050
+some wisdom. That was good.
+
+
+168
+00:08:40,050 --> 00:08:42,750
+Thanks for sharing those inputs.
+
+
+169
+00:08:42,750 --> 00:08:44,520
+It was a good discussion.
+
+
